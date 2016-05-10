@@ -1,6 +1,6 @@
 {
-  "name": "js-libp2p-ipfs-browser",
-  "version": "1.0.0",
+  "name": "libp2p-ipfs-browser",
+  "version": "0.1.0",
   "description": "libp2p build (module) used in js-ipfs when running it on the browser",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -15,6 +15,8 @@
     "test:browser": "gulp test:browser",
     "build": "gulp build",
     "release": "gulp release",
+    "release-minor": "gulp release --type minor",
+    "release-major": "gulp release --type major",
     "coverage": "gulp coverage",
     "coverage-publish": "aegir-coverage publish"
   },
