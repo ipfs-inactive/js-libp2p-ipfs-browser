@@ -34,17 +34,17 @@
     "aegir": "^3.0.1",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
-    "libp2p-ipfs": "^0.3.1",
+    "libp2p-ipfs": "^0.3.8",
     "peer-id": "^0.6.6",
     "pre-commit": "^1.1.2"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "libp2p-spdy": "^0.3.1",
-    "libp2p-swarm": "^0.12.1",
+    "libp2p-swarm": "^0.12.10",
     "libp2p-websockets": "^0.4.4",
-    "multiaddr": "^1.4.0",
-    "peer-info": "^0.6.1"
+    "multiaddr": "^1.4.1",
+    "peer-info": "^0.6.2"
   },
   "aegir": {
     "webpack": {
