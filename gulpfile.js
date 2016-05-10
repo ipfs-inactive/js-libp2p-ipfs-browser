@@ -8,7 +8,7 @@ const Id = require('peer-id')
 
 let node
 const rawPeer = require('./test/peer.json')
-const id = new Id(rawPeer.id, rawPeer.privKey, rawPeer.pubKey)
+const id = Id.createFromPrivKey(rawPeer.privKey)
 
 gulp.task('libnode:start', (done) => {
   const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/websockets')

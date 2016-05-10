@@ -8,7 +8,7 @@ const Id = require('peer-id')
 
 const Node = require('../src').Node
 const rawPeer = require('./peer.json')
-const id = new Id(rawPeer.id, rawPeer.privKey, rawPeer.pubKey)
+const id = Id.createFromPrivKey(rawPeer.privKey)
 
 describe('libp2p-ipfs-browser', function () {
   this.timeout(10000)
