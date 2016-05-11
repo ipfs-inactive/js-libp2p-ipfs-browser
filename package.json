@@ -41,7 +41,7 @@
   "dependencies": {
     "babel-runtime": "^6.6.1",
     "libp2p-spdy": "^0.3.1",
-    "libp2p-swarm": "^0.12.10",
+    "libp2p-swarm": "^0.12.11",
     "libp2p-websockets": "^0.4.4",
     "multiaddr": "^1.4.1",
     "peer-info": "^0.6.2"
