@@ -39,7 +39,7 @@
     "pre-commit": "^1.1.2"
   },
   "dependencies": {
-    "babel-runtime": "^6.6.1",
+    "babel-runtime": "^6.9.0",
     "libp2p-spdy": "^0.3.1",
     "libp2p-swarm": "^0.12.10",
     "libp2p-websockets": "^0.4.4",
