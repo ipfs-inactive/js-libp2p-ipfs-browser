@@ -11,7 +11,7 @@ const rawPeer = require('./test/peer.json')
 const id = Id.createFromPrivKey(rawPeer.privKey)
 
 gulp.task('libnode:start', (done) => {
-  const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
+  const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
   const peer = new Peer(id)
   peer.multiaddr.add(mh)
 
@@ -25,7 +25,9 @@ gulp.task('libnode:start', (done) => {
 })
 
 gulp.task('libnode:stop', (done) => {
-  node.swarm.close(done)
+  setTimeout(() => {
+    node.swarm.close(done)
+  }, 2000)
 })
 
 gulp.task('test:browser:before', ['libnode:start'])

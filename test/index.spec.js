@@ -13,6 +13,14 @@ const id = Id.createFromPrivKey(rawPeer.privKey)
 describe('libp2p-ipfs-browser', function () {
   this.timeout(10000)
   let node
+  let peer
+
+  before((done) => {
+    const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
+    peer = new Peer(id)
+    peer.multiaddr.add(mh)
+    done()
+  })
 
   it('start', (done) => {
     node = new Node()
@@ -20,10 +28,6 @@ describe('libp2p-ipfs-browser', function () {
   })
 
   it('echo', (done) => {
-    const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
-    const peer = new Peer(id)
-    peer.multiaddr.add(mh)
-
     const message = 'Hello World!'
     node.swarm.dial(peer, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist
@@ -40,11 +44,8 @@ describe('libp2p-ipfs-browser', function () {
 
   describe('stress', () => {
     it('one big write', (done) => {
-      const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
-      const peer = new Peer(id)
-      peer.multiaddr.add(mh)
-
       const message = new Buffer(1000000).fill('a').toString('hex')
+
       node.swarm.dial(peer, '/echo/1.0.0', (err, conn) => {
         expect(err).to.not.exist
 
@@ -52,6 +53,7 @@ describe('libp2p-ipfs-browser', function () {
         conn.write('STOP')
 
         let result = ''
+
         conn.on('data', (data) => {
           if (data.toString() === 'STOP') {
             conn.end()
@@ -83,14 +85,14 @@ describe('libp2p-ipfs-browser', function () {
           expected += `${counter} `
         }
 
-        setTimeout(() => {
-          while (++counter < 20000) {
-            conn.write(`${counter} `)
-            expected += `${counter} `
-          }
+        while (++counter < 20000) {
+          conn.write(`${counter} `)
+          expected += `${counter} `
+        }
 
+        setTimeout(() => {
           conn.write('STOP')
-        }, 1000)
+        }, 2000)
 
         let result = ''
         conn.on('data', (data) => {
