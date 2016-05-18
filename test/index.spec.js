@@ -20,7 +20,7 @@ describe('libp2p-ipfs-browser', function () {
   })
 
   it('echo', (done) => {
-    const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/websockets')
+    const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
     const peer = new Peer(id)
     peer.multiaddr.add(mh)
 
@@ -40,7 +40,7 @@ describe('libp2p-ipfs-browser', function () {
 
   describe('stress', () => {
     it('one big write', (done) => {
-      const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/websockets')
+      const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
       const peer = new Peer(id)
       peer.multiaddr.add(mh)
 
@@ -68,7 +68,7 @@ describe('libp2p-ipfs-browser', function () {
     })
 
     it('many writes in 2 batches', (done) => {
-      const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/websockets')
+      const mh = multiaddr('/ip4/127.0.0.1/tcp/9090/ws')
       const peer = new Peer(id)
       peer.multiaddr.add(mh)
 
