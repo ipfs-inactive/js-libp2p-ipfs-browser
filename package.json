@@ -43,7 +43,7 @@
     "libp2p-spdy": "^0.5.0",
     "libp2p-swarm": "^0.16.0",
     "libp2p-websockets": "^0.5.0",
-    "multiaddr": "^2.0.0",
+    "multiaddr": "^2.0.2",
     "peer-info": "^0.6.2"
   },
   "aegir": {
