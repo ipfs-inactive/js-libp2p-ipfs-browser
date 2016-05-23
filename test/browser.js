@@ -1,3 +1,5 @@
+'use strict'
+
 const w = require('webrtcsupport')
 
 require('./websockets-only')
