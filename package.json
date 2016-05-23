@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/ipfs/js-libp2p-ipfs-browser#readme",
   "devDependencies": {
-    "aegir": "^3.0.4",
+    "aegir": "^3.0.5",
     "bl": "^1.1.2",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
