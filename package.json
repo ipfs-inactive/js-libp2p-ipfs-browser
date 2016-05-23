@@ -35,7 +35,7 @@
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "libp2p-ipfs": "^0.5.0",
-    "peer-id": "^0.6.6",
+    "peer-id": "^0.6.7",
     "pre-commit": "^1.1.2"
   },
   "dependencies": {
