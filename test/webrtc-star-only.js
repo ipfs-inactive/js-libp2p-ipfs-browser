@@ -78,7 +78,7 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
         expect(Object.keys(node1.swarm.muxedConns).length).to.equal(2)
         expect(Object.keys(node2.swarm.muxedConns).length).to.equal(2)
         done()
-      }, 1000)
+      }, 2000)
     })
   })
 })
