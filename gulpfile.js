@@ -6,6 +6,9 @@ const Node = require('libp2p-ipfs').Node
 const Peer = require('peer-info')
 const Id = require('peer-id')
 
+const sigServer = require('libp2p-webrtc-star/src/signalling-server')
+let sigS
+
 let node
 const rawPeer = require('./test/peer.json')
 const id = Id.createFromPrivKey(rawPeer.privKey)
@@ -20,13 +23,23 @@ gulp.task('libnode:start', (done) => {
     node.swarm.handle('/echo/1.0.0', (conn) => {
       conn.pipe(conn)
     })
-    done()
+    ready()
   })
+
+  let count = 0
+  const ready = () => ++count === 2 ? done() : null
+
+  sigS = sigServer.start(15555, ready)
 })
 
 gulp.task('libnode:stop', (done) => {
   setTimeout(() => {
-    node.swarm.close(done)
+    node.swarm.close((err) => {
+      if (err) {
+        throw err
+      }
+      sigS.stop(done)
+    })
   }, 2000)
 })
 

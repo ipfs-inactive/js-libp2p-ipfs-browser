@@ -10,7 +10,7 @@ const Node = require('../src').Node
 const rawPeer = require('./peer.json')
 const id = Id.createFromPrivKey(rawPeer.privKey)
 
-describe('libp2p-ipfs-browser', function () {
+describe('libp2p-ipfs-browser (websockets only)', function () {
   this.timeout(10000)
   let node
   let peer
