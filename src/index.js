@@ -5,6 +5,7 @@ const PeerInfo = require('peer-info')
 const WS = require('libp2p-websockets')
 const WebRTCStar = require('libp2p-webrtc-star')
 const spdy = require('libp2p-spdy')
+const EE = require('events').EventEmitter
 
 exports = module.exports
 
@@ -30,7 +31,7 @@ exports.Node = function Node (peerInfo) {
     if (wstar.filter(peerInfo.multiaddrs).length > 0) {
       this.swarm.transport.add('wstar', wstar)
       wstar.discovery.on('peer', (peerInfo) => {
-        this.swarm.dial(peerInfo) // warm up a conn
+        this.discovery.emit('peer', peerInfo)
       })
       this.swarm.listen((err) => {
         if (err) {
@@ -48,6 +49,7 @@ exports.Node = function Node (peerInfo) {
     }
   }
 
+  this.discovery = new EE()
   this.routing = null
   this.records = null
 

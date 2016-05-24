@@ -72,6 +72,13 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
     const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
     peer3.multiaddr.add(mh3)
 
+    node1.discovery.on('peer', (peerInfo) => {
+      node1.swarm.dial(peerInfo)
+    })
+    node2.discovery.on('peer', (peerInfo) => {
+      node2.swarm.dial(peerInfo)
+    })
+
     const node3 = new libp2p.Node(peer3)
     node3.start(() => {
       setTimeout(() => {
