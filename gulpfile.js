@@ -20,7 +20,7 @@ gulp.task('libnode:start', (done) => {
 
   node = new Node(peer)
   node.start(() => {
-    node.swarm.handle('/echo/1.0.0', (conn) => {
+    node.handle('/echo/1.0.0', (conn) => {
       conn.pipe(conn)
     })
     ready()
@@ -34,7 +34,7 @@ gulp.task('libnode:start', (done) => {
 
 gulp.task('libnode:stop', (done) => {
   setTimeout(() => {
-    node.swarm.close((err) => {
+    node.stop((err) => {
       if (err) {
         throw err
       }
