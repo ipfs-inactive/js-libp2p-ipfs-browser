@@ -9,3 +9,65 @@
 [![Dependency Status](https://david-dm.org/ipfs/js-libp2p-ipfs-browser.svg?style=flat-square)](https://david-dm.org/ipfs/js-libp2p-ipfs-browser) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
 > libp2p build (module) used in js-ipfs when running it on the browser
+
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+  - [start](#start)
+  - [stop](#stop)
+  - [dialById](#dialbyid)
+  - [dialByMultiaddr](#dialbymultiaddr)
+  - [dialByPeerInfo](#dialbypeerinfo)
+  - [hangUpById](#hangupbyid)
+  - [hangUpByMultiaddr](#hangupbymultiaddr)
+  - [hangUpByPeerInfo](#hangupbypeerinfo)
+  - [handle](#handle)
+  - [unhandle](#unhandle)
+  - [discovery](#discovery)
+- [Contribute](#contribute)
+- [License](#license)
+
+## Install
+
+```sh
+npm install --save libp2p-ipfs-browser
+```
+
+## Usage
+
+```js
+const libp2p-ipfs-browser = require('libp2p-ipfs-browser')
+
+libp2p-ipfs-browser.start()
+```
+
+## API
+
+### start
+### stop
+### dialById
+### dialByMultiaddr
+### dialByPeerInfo
+### hangUpById
+### hangUpByMultiaddr
+### hangUpByPeerInfo
+### handle
+### unhandle
+### discovery
+
+This will create a new instance of an `events` `EventEmitter`.
+
+## Contribute
+
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-libp2p-ipfs-browser/issues)!
+
+This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+[![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/contributing.md)
+
+## License
+
+[MIT](LICENSE)
