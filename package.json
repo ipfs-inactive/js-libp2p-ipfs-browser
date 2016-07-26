@@ -42,7 +42,7 @@
     "webrtcsupport": "^2.2.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.9.0",
+    "babel-runtime": "^6.11.6",
     "libp2p-spdy": "^0.8.0",
     "libp2p-swarm": "^0.22.0",
     "libp2p-webrtc-star": "^0.3.1",
