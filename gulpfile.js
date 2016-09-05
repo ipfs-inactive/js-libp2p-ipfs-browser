@@ -5,6 +5,7 @@ const multiaddr = require('multiaddr')
 const Node = require('libp2p-ipfs').Node
 const Peer = require('peer-info')
 const Id = require('peer-id')
+const pull = require('pull-stream')
 
 const sigServer = require('libp2p-webrtc-star/src/signalling-server')
 let sigS
@@ -21,7 +22,7 @@ gulp.task('libnode:start', (done) => {
   node = new Node(peer)
   node.start(() => {
     node.handle('/echo/1.0.0', (conn) => {
-      conn.pipe(conn)
+      pull(conn, conn)
     })
     ready()
   })

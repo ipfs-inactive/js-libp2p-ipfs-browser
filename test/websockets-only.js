@@ -5,11 +5,12 @@ const expect = require('chai').expect
 const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
+const pull = require('pull-stream')
+const goodbye = require('pull-goodbye')
 
 const libp2p = require('../src')
 const rawPeer = require('./peer.json')
 const id = PeerId.createFromPrivKey(rawPeer.privKey)
-const bl = require('bl')
 
 describe('libp2p-ipfs-browser (websockets only)', function () {
   this.timeout(20 * 1000)
@@ -56,13 +57,16 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist
       expect(Object.keys(peers)).to.have.length(1)
-      conn.pipe(bl((err, data) => {
-        expect(err).to.not.exist
-        expect(data.toString()).to.equal('hey')
-        done()
-      }))
-      conn.write('hey')
-      conn.end()
+
+      pull(
+        pull.values([Buffer('hey')]),
+        conn,
+        pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(data).to.be.eql([Buffer('hey')])
+          done()
+        })
+      )
     })
   })
 
@@ -103,13 +107,16 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist
       expect(Object.keys(peers)).to.have.length(1)
-      conn.pipe(bl((err, data) => {
-        expect(err).to.not.exist
-        expect(data.toString()).to.equal('hey')
-        done()
-      }))
-      conn.write('hey')
-      conn.end()
+
+      pull(
+        pull.values([Buffer('hey')]),
+        conn,
+        pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(data).to.be.eql([Buffer('hey')])
+          done()
+        })
+      )
     })
   })
 
@@ -135,28 +142,21 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
   it.skip('libp2p.hangupById nodeA to nodeB', (done) => {})
 
   it('stress test: one big write', (done) => {
-    const message = new Buffer(1000000).fill('a').toString('hex')
+    const message = new Buffer(1000000).fill('a')
 
     nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist
 
-      conn.write(message)
-      conn.write('STOP')
-
-      let result = ''
-
-      conn.on('data', (data) => {
-        if (data.toString() === 'STOP') {
-          conn.end()
-          return
-        }
-        result += data.toString()
+      const s = goodbye({
+        soruce: pull.values([message]),
+        sink: pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(data).to.be.eql([message])
+          done()
+        })
       })
 
-      conn.on('end', () => {
-        expect(result).to.equal(message)
-        done()
-      })
+      pull(s, conn, s)
     })
   })
 
@@ -167,33 +167,32 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
     nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist
 
+      const values = []
       while (++counter < 10000) {
-        conn.write(`${counter} `)
+        values.push(Buffer(`${counter} `))
         expected += `${counter} `
       }
 
       while (++counter < 20000) {
-        conn.write(`${counter} `)
+        values.push(Buffer(`${counter} `))
         expected += `${counter} `
       }
 
-      setTimeout(() => {
-        conn.write('STOP')
-      }, 2000)
+      const s = goodbye({
+        soruce: pull.values(values),
+        sink: pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(
+            Buffer.concat(data).toString()
+          ).to.be.eql(
+            expected
+          )
 
-      let result = ''
-      conn.on('data', (data) => {
-        if (data.toString() === 'STOP') {
-          conn.end()
-          return
-        }
-        result += data.toString()
+          done()
+        })
       })
 
-      conn.on('end', () => {
-        expect(result).to.equal(expected)
-        done()
-      })
+      pull(s, conn, s)
     })
   })
 
