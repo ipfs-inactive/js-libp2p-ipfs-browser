@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.9.0",
-    "libp2p-spdy": "^0.8.1",
+    "libp2p-spdy": "^0.9.0",
     "libp2p-swarm": "^0.22.2",
     "libp2p-webrtc-star": "^0.3.2",
     "libp2p-websockets": "^0.7.1",
