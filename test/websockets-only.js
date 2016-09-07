@@ -1,3 +1,4 @@
+/* eslint max-nested-callbacks: ["error", 8] */
 /* eslint-env mocha */
 'use strict'
 
@@ -5,15 +6,15 @@ const expect = require('chai').expect
 const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
+const pull = require('pull-stream')
+const goodbye = require('pull-goodbye')
+const serializer = require('pull-serializer')
 
 const libp2p = require('../src')
 const rawPeer = require('./peer.json')
 const id = PeerId.createFromPrivKey(rawPeer.privKey)
-const bl = require('bl')
 
 describe('libp2p-ipfs-browser (websockets only)', function () {
-  this.timeout(20 * 1000)
-
   let peerB
   let nodeA
 
@@ -22,6 +23,10 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
     peerB = new PeerInfo(id)
     peerB.multiaddr.add(mh)
     done()
+  })
+
+  after((done) => {
+    nodeA.stop(done)
   })
 
   it('create libp2pNode', () => {
@@ -56,13 +61,16 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist
       expect(Object.keys(peers)).to.have.length(1)
-      conn.pipe(bl((err, data) => {
-        expect(err).to.not.exist
-        expect(data.toString()).to.equal('hey')
-        done()
-      }))
-      conn.write('hey')
-      conn.end()
+
+      pull(
+        pull.values([Buffer('hey')]),
+        conn,
+        pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(data).to.be.eql([Buffer('hey')])
+          done()
+        })
+      )
     })
   })
 
@@ -103,13 +111,16 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist
       expect(Object.keys(peers)).to.have.length(1)
-      conn.pipe(bl((err, data) => {
-        expect(err).to.not.exist
-        expect(data.toString()).to.equal('hey')
-        done()
-      }))
-      conn.write('hey')
-      conn.end()
+
+      pull(
+        pull.values([Buffer('hey')]),
+        conn,
+        pull.collect((err, data) => {
+          expect(err).to.not.exist
+          expect(data).to.be.eql([Buffer('hey')])
+          done()
+        })
+      )
     })
   })
 
@@ -134,70 +145,44 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
   it.skip('libp2p.dialById on Protocol nodeA to nodeB', (done) => {})
   it.skip('libp2p.hangupById nodeA to nodeB', (done) => {})
 
-  it('stress test: one big write', (done) => {
-    const message = new Buffer(1000000).fill('a').toString('hex')
+  describe('stress', () => {
+    it('one big write', (done) => {
+      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+        expect(err).to.not.exist
+        const rawMessage = new Buffer(1000000).fill('a')
 
-    nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
-      expect(err).to.not.exist
-
-      conn.write(message)
-      conn.write('STOP')
-
-      let result = ''
-
-      conn.on('data', (data) => {
-        if (data.toString() === 'STOP') {
-          conn.end()
-          return
-        }
-        result += data.toString()
-      })
-
-      conn.on('end', () => {
-        expect(result).to.equal(message)
-        done()
+        const s = serializer(goodbye({
+          source: pull.values([rawMessage]),
+          sink: pull.collect((err, results) => {
+            expect(err).to.not.exist
+            expect(results).to.have.length(1)
+            expect(Buffer(results[0])).to.have.length(rawMessage.length)
+            done()
+          })
+        }))
+        pull(s, conn, s)
       })
     })
-  })
 
-  it('stress test: many writes in 2 batches', (done) => {
-    let expected = ''
-    let counter = 0
+    it('many writes', (done) => {
+      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+        expect(err).to.not.exist
 
-    nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
-      expect(err).to.not.exist
+        const s = serializer(goodbye({
+          source: pull(
+            pull.infinite(),
+            pull.take(1000),
+            pull.map((val) => Buffer(val.toString()))
+          ),
+          sink: pull.collect((err, result) => {
+            expect(err).to.not.exist
+            expect(result).to.have.length(1000)
+            done()
+          })
+        }))
 
-      while (++counter < 10000) {
-        conn.write(`${counter} `)
-        expected += `${counter} `
-      }
-
-      while (++counter < 20000) {
-        conn.write(`${counter} `)
-        expected += `${counter} `
-      }
-
-      setTimeout(() => {
-        conn.write('STOP')
-      }, 2000)
-
-      let result = ''
-      conn.on('data', (data) => {
-        if (data.toString() === 'STOP') {
-          conn.end()
-          return
-        }
-        result += data.toString()
-      })
-
-      conn.on('end', () => {
-        expect(result).to.equal(expected)
-        done()
+        pull(s, conn, s)
       })
     })
-  })
-
-  it('stop the libp2pnode', (done) => {
-    nodeA.stop(done)
   })
 })
