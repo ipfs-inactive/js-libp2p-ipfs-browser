@@ -6,7 +6,7 @@ const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
 const peerId = require('peer-id')
 const parallel = require('run-parallel')
-const bl = require('bl')
+const pull = require('pull-stream')
 
 const libp2p = require('../src')
 
@@ -47,7 +47,7 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
 
   it('handle a protocol on the first node', (done) => {
     node2.handle('/echo/1.0.0', (conn) => {
-      conn.pipe(conn)
+      pull(conn, conn)
     })
     done()
   })
@@ -65,13 +65,16 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
         const peers2 = node2.peerBook.getAll()
         expect(err).to.not.exist
         expect(Object.keys(peers2)).to.have.length(1)
-        conn.pipe(bl((err, data) => {
-          expect(err).to.not.exist
-          expect(data.toString()).to.equal(text)
-          done()
-        }))
-        conn.write(text)
-        conn.end()
+
+        pull(
+          pull.values([Buffer(text)]),
+          conn,
+          pull.collect((err, data) => {
+            expect(err).to.not.exist
+            expect(data[0].toString()).to.equal(text)
+            done()
+          })
+        )
       }
     })
   })

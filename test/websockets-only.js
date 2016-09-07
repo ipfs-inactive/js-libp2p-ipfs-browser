@@ -1,3 +1,4 @@
+/* eslint max-nested-callbacks: ["error", 8] */
 /* eslint-env mocha */
 'use strict'
 
@@ -7,14 +8,13 @@ const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
 const pull = require('pull-stream')
 const goodbye = require('pull-goodbye')
+const serializer = require('pull-serializer')
 
 const libp2p = require('../src')
 const rawPeer = require('./peer.json')
 const id = PeerId.createFromPrivKey(rawPeer.privKey)
 
 describe('libp2p-ipfs-browser (websockets only)', function () {
-  this.timeout(20 * 1000)
-
   let peerB
   let nodeA
 
@@ -23,6 +23,10 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
     peerB = new PeerInfo(id)
     peerB.multiaddr.add(mh)
     done()
+  })
+
+  after((done) => {
+    nodeA.stop(done)
   })
 
   it('create libp2pNode', () => {
@@ -141,62 +145,44 @@ describe('libp2p-ipfs-browser (websockets only)', function () {
   it.skip('libp2p.dialById on Protocol nodeA to nodeB', (done) => {})
   it.skip('libp2p.hangupById nodeA to nodeB', (done) => {})
 
-  it('stress test: one big write', (done) => {
-    const message = new Buffer(1000000).fill('a')
+  describe('stress', () => {
+    it('one big write', (done) => {
+      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+        expect(err).to.not.exist
+        const rawMessage = new Buffer(1000000).fill('a')
 
-    nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
-      expect(err).to.not.exist
-
-      const s = goodbye({
-        soruce: pull.values([message]),
-        sink: pull.collect((err, data) => {
-          expect(err).to.not.exist
-          expect(data).to.be.eql([message])
-          done()
-        })
+        const s = serializer(goodbye({
+          source: pull.values([rawMessage]),
+          sink: pull.collect((err, results) => {
+            expect(err).to.not.exist
+            expect(results).to.have.length(1)
+            expect(Buffer(results[0])).to.have.length(rawMessage.length)
+            done()
+          })
+        }))
+        pull(s, conn, s)
       })
-
-      pull(s, conn, s)
     })
-  })
 
-  it('stress test: many writes in 2 batches', (done) => {
-    let expected = ''
-    let counter = 0
+    it('many writes', (done) => {
+      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+        expect(err).to.not.exist
 
-    nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
-      expect(err).to.not.exist
+        const s = serializer(goodbye({
+          source: pull(
+            pull.infinite(),
+            pull.take(1000),
+            pull.map((val) => Buffer(val.toString()))
+          ),
+          sink: pull.collect((err, result) => {
+            expect(err).to.not.exist
+            expect(result).to.have.length(1000)
+            done()
+          })
+        }))
 
-      const values = []
-      while (++counter < 10000) {
-        values.push(Buffer(`${counter} `))
-        expected += `${counter} `
-      }
-
-      while (++counter < 20000) {
-        values.push(Buffer(`${counter} `))
-        expected += `${counter} `
-      }
-
-      const s = goodbye({
-        soruce: pull.values(values),
-        sink: pull.collect((err, data) => {
-          expect(err).to.not.exist
-          expect(
-            Buffer.concat(data).toString()
-          ).to.be.eql(
-            expected
-          )
-
-          done()
-        })
+        pull(s, conn, s)
       })
-
-      pull(s, conn, s)
     })
-  })
-
-  it('stop the libp2pnode', (done) => {
-    nodeA.stop(done)
   })
 })
