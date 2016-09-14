@@ -116,4 +116,13 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
       }, 2000)
     })
   })
+
+  it('node1 ping to node2', (done) => {
+    const p = node1.ping(node2.peerInfo)
+
+    p.once('ping', (time) => {
+      p.stop()
+      done()
+    })
+  })
 })

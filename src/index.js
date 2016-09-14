@@ -11,6 +11,7 @@ const EE = require('events').EventEmitter
 const multiaddr = require('multiaddr')
 const PeerBook = require('peer-book')
 const mafmt = require('mafmt')
+const Ping = require('libp2p-ping')
 
 exports = module.exports
 
@@ -198,6 +199,12 @@ exports.Node = function Node (pInfo, pBook) {
 
   this.unhandle = (protocol) => {
     return this.swarm.unhandle(protocol)
+  }
+
+  Ping.attach(this.swarm) // Enable this peer to echo Ping requests
+
+  this.ping = (peerDst) => {
+    return new Ping(this.swarm, peerDst) // Ping peerDst, peerDst must be a peer-info object
   }
 
   this.discovery = new EE()
