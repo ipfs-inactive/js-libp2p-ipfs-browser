@@ -1,5 +1,7 @@
 # js-libp2p-ipfs-browser
 
+![](https://github.com/libp2p/js-libp2p/raw/1e3e9db84d1e5fdd5682cc5e0fdaabfcd07ad55a/img/js-libp2p-ipfs-browser.png?raw=true)
+
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
@@ -8,7 +10,14 @@
 [![Circle CI](https://circleci.com/gh/ipfs/js-libp2p-ipfs-browser.svg?style=svg)](https://circleci.com/gh/ipfs/js-libp2p-ipfs-browser)
 [![Dependency Status](https://david-dm.org/ipfs/js-libp2p-ipfs-browser.svg?style=flat-square)](https://david-dm.org/ipfs/js-libp2p-ipfs-browser) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> libp2p build (module) used in js-ipfs when running it on the browser
+> libp2p build (module) used in js-ipfs when running it on the browser.
+
+This libp2p build has support for:
+
+- WebSockets and WebRTC
+- SPDY stream multiplexing
+- secio encrypted channels
+- Identify STUN protocol
 
 ## Table of Contents
 
