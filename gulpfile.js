@@ -12,25 +12,29 @@ let sigS
 
 let node
 const rawPeer = require('./test/peer.json')
-const id = Id.createFromPrivKey(rawPeer.privKey)
-
 gulp.task('libnode:start', (done) => {
   const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
-  const peer = new Peer(id)
-  peer.multiaddr.add(mh)
+  Id.createFromPrivKey(rawPeer.privKey, (err, id) => {
+    if (err) {
+      return done(err)
+    }
 
-  node = new Node(peer)
-  node.start(() => {
-    node.handle('/echo/1.0.0', (conn) => {
-      pull(conn, conn)
+    const peer = new Peer(id)
+    peer.multiaddr.add(mh)
+
+    node = new Node(peer)
+    node.start(() => {
+      node.handle('/echo/1.0.0', (conn) => {
+        pull(conn, conn)
+      })
+      ready()
     })
-    ready()
+
+    let count = 0
+    const ready = () => ++count === 2 ? done() : null
+
+    sigS = sigServer.start(15555, ready)
   })
-
-  let count = 0
-  const ready = () => ++count === 2 ? done() : null
-
-  sigS = sigServer.start(15555, ready)
 })
 
 gulp.task('libnode:stop', (done) => {
