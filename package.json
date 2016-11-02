@@ -2,21 +2,20 @@
   "name": "libp2p-ipfs-browser",
   "version": "0.15.1",
   "description": "libp2p build (module) used in js-ipfs when running it on the browser",
-  "main": "lib/index.js",
-  "jsnext:main": "src/index.js",
+  "main": "src/index.js",
   "pre-commit": [
     "lint",
     "test"
   ],
   "scripts": {
     "lint": "aegir-lint",
-    "test": "PHANTOM=off gulp test",
+    "test": "gulp test",
     "test:node": "gulp test:node",
-    "test:browser": "PHANTOM=off gulp test:browser",
+    "test:browser": "gulp test:browser",
     "build": "gulp build",
-    "release": "PHANTOM=off gulp release",
-    "release-minor": "PHANTOM=off gulp release --type minor",
-    "release-major": "PHANTOM=off gulp release --type major",
+    "release": "gulp release",
+    "release-minor": "gulp release --type minor",
+    "release-major": "gulp release --type major",
     "coverage": "gulp coverage",
     "coverage-publish": "aegir-coverage publish"
   },
@@ -31,7 +30,8 @@
   },
   "homepage": "https://github.com/ipfs/js-libp2p-ipfs-browser#readme",
   "devDependencies": {
-    "aegir": "^8.0.1",
+    "aegir": "^9.0.0",
+    "async": "^2.1.2",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "libp2p-ipfs": "^0.14.1",
@@ -40,11 +40,9 @@
     "pull-goodbye": "0.0.1",
     "pull-serializer": "^0.3.2",
     "pull-stream": "^3.4.5",
-    "run-parallel": "^1.1.6",
     "webrtcsupport": "^2.2.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.11.6",
     "libp2p-secio": "^0.5.0",
     "libp2p-spdy": "^0.9.0",
     "libp2p-swarm": "^0.23.0",
