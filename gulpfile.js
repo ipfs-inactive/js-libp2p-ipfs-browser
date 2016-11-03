@@ -24,7 +24,7 @@ gulp.task('libnode:start', (done) => {
 
     node = new Node(peer)
     node.start(() => {
-      node.handle('/echo/1.0.0', (conn) => {
+      node.handle('/echo/1.0.0', (protocol, conn) => {
         pull(conn, conn)
       })
       ready()

@@ -51,7 +51,7 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   })
 
   it('handle a protocol on the first node', (done) => {
-    node2.handle('/echo/1.0.0', (conn) => {
+    node2.handle('/echo/1.0.0', (protocol, conn) => {
       pull(conn, conn)
     })
     done()
