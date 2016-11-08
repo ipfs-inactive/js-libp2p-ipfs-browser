@@ -53,6 +53,7 @@ exports.Node = function Node (pInfo, pBook) {
     // if we have `webrtc-star` addrs, then add
     // the WebRTCStar transport
     const wstar = new WebRTCStar()
+
     if (wstar.filter(this.peerInfo.multiaddrs).length > 0) {
       this.swarm.transport.add('wstar', wstar)
       wstar.discovery.on('peer', (peerInfo) => {

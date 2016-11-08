@@ -19,6 +19,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
 
   before((done) => {
     const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws/ipfs/' + rawPeer.id)
+
     PeerId.createFromPrivKey(rawPeer.privKey, (err, id) => {
       if (err) {
         return done(err)
