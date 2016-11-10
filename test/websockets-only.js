@@ -66,7 +66,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.dialByMultiaddr on Protocol nodeA to nodeB', (done) => {
+  it.skip('libp2p.dialByMultiaddr on Protocol nodeA to nodeB', (done) => {
     nodeA.dialByMultiaddr(peerB.multiaddrs[0], '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist
       const peers = nodeA.peerBook.getAll()
@@ -85,7 +85,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.hangupByMultiaddr nodeA to nodeB', (done) => {
+  it.skip('libp2p.hangupByMultiaddr nodeA to nodeB', (done) => {
     nodeA.hangUpByMultiaddr(peerB.multiaddrs[0], (err) => {
       expect(err).to.not.exist
       setTimeout(check, 500)
@@ -100,7 +100,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.dialByPeerInfo nodeA to nodeB', (done) => {
+  it.skip('libp2p.dialByPeerInfo nodeA to nodeB', (done) => {
     nodeA.dialByPeerInfo(peerB, (err) => {
       expect(err).to.not.exist
       // Some time for Identify to finish
@@ -116,7 +116,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.dialByPeerInfo on Protocol nodeA to nodeB', (done) => {
+  it.skip('libp2p.dialByPeerInfo on Protocol nodeA to nodeB', (done) => {
     nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist
       const peers = nodeA.peerBook.getAll()
@@ -135,7 +135,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.hangupByPeerInfo nodeA to nodeB', (done) => {
+  it.skip('libp2p.hangupByPeerInfo nodeA to nodeB', (done) => {
     nodeA.hangUpByPeerInfo(peerB, (err) => {
       expect(err).to.not.exist
       setTimeout(check, 500)
@@ -156,7 +156,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   it.skip('libp2p.dialById on Protocol nodeA to nodeB', (done) => {})
   it.skip('libp2p.hangupById nodeA to nodeB', (done) => {})
 
-  describe('stress', () => {
+  describe.skip('stress', () => {
     it('one big write', (done) => {
       nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
         expect(err).to.not.exist
