@@ -3,8 +3,8 @@
 const gulp = require('gulp')
 const multiaddr = require('multiaddr')
 const Node = require('libp2p-ipfs').Node
-const Peer = require('peer-info')
-const Id = require('peer-id')
+const PeerInfo = require('peer-info')
+const PeerId = require('peer-id')
 const pull = require('pull-stream')
 
 const sigServer = require('libp2p-webrtc-star/src/signalling-server')
@@ -12,25 +12,32 @@ let sigS
 
 let node
 const rawPeer = require('./test/peer.json')
-const id = Id.createFromPrivKey(rawPeer.privKey)
 
 gulp.task('libnode:start', (done) => {
-  const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
-  const peer = new Peer(id)
-  peer.multiaddr.add(mh)
-
-  node = new Node(peer)
-  node.start(() => {
-    node.handle('/echo/1.0.0', (conn) => {
-      pull(conn, conn)
-    })
-    ready()
-  })
-
   let count = 0
   const ready = () => ++count === 2 ? done() : null
 
   sigS = sigServer.start(15555, ready)
+
+  PeerId.createFromJSON(rawPeer, gotId)
+
+  function gotId (err, pid) {
+    if (err) {
+      return done(err)
+    }
+    const peer = new PeerInfo(pid)
+
+    const ma = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
+    peer.multiaddr.add(ma)
+
+    node = new Node(peer)
+    node.start(() => {
+      node.handle('/echo/1.0.0', (protocol, conn) => {
+        pull(conn, conn)
+      })
+      ready()
+    })
+  }
 })
 
 gulp.task('libnode:stop', (done) => {

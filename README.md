@@ -9,6 +9,10 @@
 [![Travis CI](https://travis-ci.org/ipfs/js-libp2p-ipfs-browser.svg?branch=master)](https://travis-ci.org/ipfs/js-libp2p-ipfs-browser)
 [![Circle CI](https://circleci.com/gh/ipfs/js-libp2p-ipfs-browser.svg?style=svg)](https://circleci.com/gh/ipfs/js-libp2p-ipfs-browser)
 [![Dependency Status](https://david-dm.org/ipfs/js-libp2p-ipfs-browser.svg?style=flat-square)](https://david-dm.org/ipfs/js-libp2p-ipfs-browser) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
+![](https://img.shields.io/badge/Node.js-%3E%3D4.0.0-orange.svg?style=flat-square)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/libp2p-ipfs-browser.svg)](https://saucelabs.com/u/libp2p-ipfs-browser)
 
 > libp2p build (module) used in js-ipfs when running it on the browser.
 

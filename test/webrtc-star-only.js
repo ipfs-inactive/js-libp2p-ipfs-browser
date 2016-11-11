@@ -4,8 +4,8 @@
 const expect = require('chai').expect
 const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
-const peerId = require('peer-id')
-const parallel = require('run-parallel')
+const PeerId = require('peer-id')
+const parallel = require('async/parallel')
 const pull = require('pull-stream')
 
 const libp2p = require('../src')
@@ -19,17 +19,22 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   let node2
 
   it('create two peerInfo with webrtc-star addrs', (done) => {
-    const id1 = peerId.create()
-    peer1 = new PeerInfo(id1)
-    const mh1 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id1.toB58String())
-    peer1.multiaddr.add(mh1)
+    parallel([
+      (cb) => PeerId.create(cb),
+      (cb) => PeerId.create(cb)
+    ], (err, ids) => {
+      expect(err).to.not.exist
 
-    const id2 = peerId.create()
-    peer2 = new PeerInfo(id2)
-    const mh2 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id2.toB58String())
-    peer2.multiaddr.add(mh2)
+      peer1 = new PeerInfo(ids[0])
+      const mh1 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + ids[0].toB58String())
+      peer1.multiaddr.add(mh1)
 
-    done()
+      peer2 = new PeerInfo(ids[1])
+      const mh2 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + ids[1].toB58String())
+      peer2.multiaddr.add(mh2)
+
+      done()
+    })
   })
 
   it('create two libp2p nodes with those peers', (done) => {
@@ -46,7 +51,7 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   })
 
   it('handle a protocol on the first node', (done) => {
-    node2.handle('/echo/1.0.0', (conn) => {
+    node2.handle('/echo/1.0.0', (protocol, conn) => {
       pull(conn, conn)
     })
     done()
@@ -95,25 +100,28 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   })
 
   it('create a third node and check that discovery works', (done) => {
-    const id3 = peerId.create()
-    const peer3 = new PeerInfo(id3)
-    const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
-    peer3.multiaddr.add(mh3)
+    PeerId.create((err, id3) => {
+      expect(err).to.not.exist
 
-    node1.discovery.on('peer', (peerInfo) => {
-      node1.dialByPeerInfo(peerInfo, () => {})
-    })
-    node2.discovery.on('peer', (peerInfo) => {
-      node2.dialByPeerInfo(peerInfo, () => {})
-    })
+      const peer3 = new PeerInfo(id3)
+      const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
+      peer3.multiaddr.add(mh3)
 
-    const node3 = new libp2p.Node(peer3)
-    node3.start(() => {
-      setTimeout(() => {
-        expect(Object.keys(node1.swarm.muxedConns).length).to.equal(1)
-        expect(Object.keys(node2.swarm.muxedConns).length).to.equal(1)
-        done()
-      }, 2000)
+      node1.discovery.on('peer', (peerInfo) => {
+        node1.dialByPeerInfo(peerInfo, () => {})
+      })
+      node2.discovery.on('peer', (peerInfo) => {
+        node2.dialByPeerInfo(peerInfo, () => {})
+      })
+
+      const node3 = new libp2p.Node(peer3)
+      node3.start(() => {
+        setTimeout(() => {
+          expect(Object.keys(node1.swarm.muxedConns).length).to.equal(1)
+          expect(Object.keys(node2.swarm.muxedConns).length).to.equal(1)
+          done()
+        }, 2000)
+      })
     })
   })
 })

@@ -12,25 +12,36 @@ const serializer = require('pull-serializer')
 
 const libp2p = require('../src')
 const rawPeer = require('./peer.json')
-const id = PeerId.createFromPrivKey(rawPeer.privKey)
 
-describe('libp2p-ipfs-browser (websockets only)', function () {
+describe('libp2p-ipfs-browser (websockets only)', () => {
   let peerB
   let nodeA
 
   before((done) => {
     const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws/ipfs/' + rawPeer.id)
-    peerB = new PeerInfo(id)
-    peerB.multiaddr.add(mh)
-    done()
+
+    PeerId.createFromPrivKey(rawPeer.privKey, (err, id) => {
+      if (err) {
+        return done(err)
+      }
+
+      peerB = new PeerInfo(id)
+      peerB.multiaddr.add(mh)
+      done()
+    })
   })
 
   after((done) => {
     nodeA.stop(done)
   })
 
-  it('create libp2pNode', () => {
-    nodeA = new libp2p.Node()
+  it('create libp2pNode', (done) => {
+    PeerInfo.create((err, info) => {
+      expect(err).to.not.exist
+      info.multiaddr.add(multiaddr('/ip4/0.0.0.0/tcp/0'))
+      nodeA = new libp2p.Node(info)
+      done()
+    })
   })
 
   it('start libp2pNode', (done) => {

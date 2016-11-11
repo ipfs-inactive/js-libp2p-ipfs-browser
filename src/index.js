@@ -23,8 +23,7 @@ exports.Node = function Node (pInfo, pBook) {
   }
 
   if (!pInfo) {
-    pInfo = new PeerInfo()
-    pInfo.multiaddr.add(multiaddr('/ip4/0.0.0.0/tcp/0'))
+    throw new Error('missing peer info')
   }
 
   if (!pBook) {
@@ -54,6 +53,7 @@ exports.Node = function Node (pInfo, pBook) {
     // if we have `webrtc-star` addrs, then add
     // the WebRTCStar transport
     const wstar = new WebRTCStar()
+
     if (wstar.filter(this.peerInfo.multiaddrs).length > 0) {
       this.swarm.transport.add('wstar', wstar)
       wstar.discovery.on('peer', (peerInfo) => {
@@ -192,8 +192,8 @@ exports.Node = function Node (pInfo, pBook) {
     this.swarm.hangUp(peer, callback)
   }
 
-  this.handle = (protocol, handler) => {
-    return this.swarm.handle(protocol, handler)
+  this.handle = (protocol, handlerFunc, matchFunc) => {
+    return this.swarm.handle(protocol, handlerFunc, matchFunc)
   }
 
   this.unhandle = (protocol) => {
