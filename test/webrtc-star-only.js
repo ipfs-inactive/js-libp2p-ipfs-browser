@@ -8,7 +8,7 @@ const PeerId = require('peer-id')
 const parallel = require('async/parallel')
 const pull = require('pull-stream')
 
-const libp2p = require('../src')
+const Node = require('../src')
 
 describe('libp2p-ipfs-browser (webrtc only)', function () {
   this.timeout(15 * 1000)
@@ -38,15 +38,19 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   })
 
   it('create two libp2p nodes with those peers', (done) => {
-    node1 = new libp2p.Node(peer1)
-    node2 = new libp2p.Node(peer2)
+    node1 = new Node(peer1)
+    node2 = new Node(peer2)
     done()
   })
 
   it('listen on the two libp2p nodes', (done) => {
     parallel([
-      node1.start,
-      node2.start
+      (cb) => {
+        node1.start(cb)
+      },
+      (cb) => {
+        node2.start(cb)
+      }
     ], done)
   })
 
@@ -114,7 +118,7 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
         node2.dialByPeerInfo(peerInfo, () => {})
       })
 
-      const node3 = new libp2p.Node(peer3)
+      const node3 = new Node(peer3)
       node3.start(() => {
         setTimeout(() => {
           expect(Object.keys(node1.swarm.muxedConns).length).to.equal(1)

@@ -2,7 +2,7 @@
 
 const gulp = require('gulp')
 const multiaddr = require('multiaddr')
-const Node = require('libp2p-ipfs').Node
+const Node = require('libp2p-ipfs-nodejs')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
 const pull = require('pull-stream')

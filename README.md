@@ -14,7 +14,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/libp2p-ipfs-browser.svg)](https://saucelabs.com/u/libp2p-ipfs-browser)
 
-> libp2p build (module) used in js-ipfs when running it on the browser.
+> libp2p build (module) used in js-ipfs when running it on the browser. If you are looking for the version to be used in Node.js, see [libp2p-ipfs-nodejs](https://github.com/ipfs/js-libp2p-ipfs-nodejs).
 
 This libp2p build has support for:
 
