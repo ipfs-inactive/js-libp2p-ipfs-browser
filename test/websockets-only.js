@@ -10,7 +10,7 @@ const pull = require('pull-stream')
 const goodbye = require('pull-goodbye')
 const serializer = require('pull-serializer')
 
-const libp2p = require('../src')
+const Node = require('../src')
 const rawPeer = require('./peer.json')
 
 describe('libp2p-ipfs-browser (websockets only)', () => {
@@ -39,7 +39,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     PeerInfo.create((err, info) => {
       expect(err).to.not.exist
       info.multiaddr.add(multiaddr('/ip4/0.0.0.0/tcp/0'))
-      nodeA = new libp2p.Node(info)
+      nodeA = new Node(info)
       done()
     })
   })
