@@ -7,8 +7,8 @@ const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
 const pull = require('pull-stream')
 
-const sigServer = require('libp2p-webrtc-star/src/signalling-server')
-let sigS
+const signalling = require('libp2p-webrtc-star/src/signalling')
+let server
 
 let node
 const rawPeer = require('./test/peer.json')
@@ -17,7 +17,15 @@ gulp.task('libnode:start', (done) => {
   let count = 0
   const ready = () => ++count === 2 ? done() : null
 
-  sigS = sigServer.start(15555, ready)
+  signalling.start({
+    port: 15555
+  }, (err, _server) => {
+    if (err) {
+      throw err
+    }
+    server = _server
+    ready()
+  })
 
   PeerId.createFromJSON(rawPeer, gotId)
 
@@ -46,7 +54,7 @@ gulp.task('libnode:stop', (done) => {
       if (err) {
         throw err
       }
-      sigS.stop(done)
+      server.stop(done)
     })
   }, 2000)
 })
