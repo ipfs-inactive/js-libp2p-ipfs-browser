@@ -7,7 +7,7 @@ const secio = require('libp2p-secio')
 const libp2p = require('libp2p')
 
 class Node extends libp2p {
-  constructor (peerInfo, peerBook) {
+  constructor (peerInfo, peerBook, options) {
     const webRTCStar = new WebRTCStar()
 
     const modules = {
@@ -27,7 +27,7 @@ class Node extends libp2p {
         webRTCStar.discovery
       ]
     }
-    super(modules, peerInfo, peerBook)
+    super(modules, peerInfo, peerBook, options)
   }
 }
 
