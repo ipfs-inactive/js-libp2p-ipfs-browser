@@ -10,9 +10,7 @@ const pull = require('pull-stream')
 
 const Node = require('../src')
 
-describe('libp2p-ipfs-browser (webrtc only)', function () {
-  this.timeout(15 * 1000)
-
+describe('libp2p-ipfs-browser (webrtc only)', () => {
   let peer1
   let peer2
   let node1
@@ -104,6 +102,16 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
   })
 
   it('create a third node and check that discovery works', (done) => {
+    let counter = 0
+
+    function check () {
+      if (++counter === 3) {
+        expect(Object.keys(node1.swarm.muxedConns).length).to.equal(1)
+        expect(Object.keys(node2.swarm.muxedConns).length).to.equal(1)
+        done()
+      }
+    }
+
     PeerId.create((err, id3) => {
       expect(err).to.not.exist
 
@@ -111,21 +119,11 @@ describe('libp2p-ipfs-browser (webrtc only)', function () {
       const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
       peer3.multiaddr.add(mh3)
 
-      node1.discovery.on('peer', (peerInfo) => {
-        node1.dialByPeerInfo(peerInfo, () => {})
-      })
-      node2.discovery.on('peer', (peerInfo) => {
-        node2.dialByPeerInfo(peerInfo, () => {})
-      })
+      node1.discovery.on('peer', (peerInfo) => node1.dialByPeerInfo(peerInfo, check))
+      node2.discovery.on('peer', (peerInfo) => node2.dialByPeerInfo(peerInfo, check))
 
       const node3 = new Node(peer3)
-      node3.start(() => {
-        setTimeout(() => {
-          expect(Object.keys(node1.swarm.muxedConns).length).to.equal(1)
-          expect(Object.keys(node2.swarm.muxedConns).length).to.equal(1)
-          done()
-        }, 2000)
-      })
+      node3.start(check)
     })
   })
 })
