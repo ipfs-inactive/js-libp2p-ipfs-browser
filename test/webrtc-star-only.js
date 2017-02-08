@@ -36,8 +36,8 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
   })
 
   it('create two libp2p nodes with those peers', (done) => {
-    node1 = new Node(peer1)
-    node2 = new Node(peer2)
+    node1 = new Node(peer1, null, { webrtc: true })
+    node2 = new Node(peer2, null, { webrtc: true })
     done()
   })
 
@@ -122,7 +122,7 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
       node1.discovery.on('peer', (peerInfo) => node1.dialByPeerInfo(peerInfo, check))
       node2.discovery.on('peer', (peerInfo) => node2.dialByPeerInfo(peerInfo, check))
 
-      const node3 = new Node(peer3)
+      const node3 = new Node(peer3, null, { webrtc: true })
       node3.start(check)
     })
   })
