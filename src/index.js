@@ -25,9 +25,11 @@ class Node extends libp2p {
           secio
         ]
       },
-      discovery: [
-        webRTCStar.discovery
-      ]
+      discovery: []
+    }
+
+    if (options.webRTCStar) {
+      modules.discovery.push(webRTCStar.discovery)
     }
 
     if (options.bootstrap && process.env.IPFS_BOOTSTRAP) {
