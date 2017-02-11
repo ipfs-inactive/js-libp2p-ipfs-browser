@@ -1,29 +1,58 @@
 'use strict'
 
-const PeerInfo = require('peer-info')
-const Node = require('../../../src')
-const multiaddr = require('multiaddr')
+const domReady = require('detect-dom-ready')
+const createNode = require('./create-node')
 
-PeerInfo.create((err, peerInfo) => {
-  if (err) {
-    throw err
-  }
+domReady(() => {
+  const myPeerDiv = document.getElementById('my-peer')
+  const swarmDiv = document.getElementById('swarm')
 
-  const peerIdStr = peerInfo.id.toB58String()
-  const ma = `/libp2p-webrtc-star/dns4/star-signal.cloud.ipfs.team/wss/ipfs/${peerIdStr}`
-
-  peerInfo.multiaddr.add(multiaddr(ma))
-
-  const node = new Node(peerInfo, undefined, { webRTCStar: true })
-
-  node.discovery.on('peer', (peerInfo) => {
-    console.log('Discovered peer', peerInfo.id.toB58String())
-  })
-
-  node.start((err) => {
+  createNode((err, node) => {
     if (err) {
-      throw err
+      return console.log('Could not create the Node, check if your browser has WebRTC Support', err)
     }
-    console.log('Node is listening')
+
+    node.discovery.on('peer', (peerInfo) => {
+      const idStr = peerInfo.id.toB58String()
+      console.log('Discovered: ' + idStr)
+
+      node.dialByPeerInfo(peerInfo, (err, conn) => {
+        if (err) { return console.log('Failed to dial:', idStr) }
+      })
+    })
+
+    node.swarm.on('peer-mux-established', (peerInfo) => {
+      const idStr = peerInfo.id.toB58String()
+      console.log('Got connection to: ' + idStr)
+      const connDiv = document.createElement('div')
+      connDiv.innerHTML = 'Connected to: ' + idStr
+      connDiv.id = idStr
+      swarmDiv.append(connDiv)
+    })
+
+    node.swarm.on('peer-mux-closed', (peerInfo) => {
+      const idStr = peerInfo.id.toB58String()
+      console.log('Lost connection to: ' + idStr)
+      document.getElementById(idStr).remove()
+    })
+
+    node.start((err) => {
+      if (err) {
+        return console.log('WebRTC not supported')
+      }
+
+      const idStr = node.peerInfo.id.toB58String()
+
+      const idDiv = document
+        .createTextNode('Node is ready. ID: ' + idStr)
+
+      myPeerDiv.append(idDiv)
+
+      console.log('Node is listening o/')
+
+      /* to stop the node
+       * node.stop((err) => {})
+       */
+    })
   })
 })
