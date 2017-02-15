@@ -1,6 +1,6 @@
 {
   "name": "libp2p-ipfs-browser",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "libp2p build (module) used in js-ipfs when running it on the browser",
   "main": "src/index.js",
   "pre-commit": [
