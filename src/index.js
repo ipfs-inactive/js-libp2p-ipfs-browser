@@ -3,6 +3,7 @@
 const WS = require('libp2p-websockets')
 const WebRTCStar = require('libp2p-webrtc-star')
 const spdy = require('libp2p-spdy')
+const multiplex = require('libp2p-multiplex')
 const secio = require('libp2p-secio')
 const Railing = require('libp2p-railing')
 const libp2p = require('libp2p')
@@ -18,9 +19,7 @@ class Node extends libp2p {
         webRTCStar
       ],
       connection: {
-        muxer: [
-          spdy
-        ],
+        muxer: options.muxer || [spdy, multiplex],
         crypto: [
           secio
         ]
