@@ -44,6 +44,17 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
+  it('create libp2pNode with multiplex only', (done) => {
+    PeerInfo.create((err, info) => {
+      expect(err).to.not.exist
+      const b = new Node(info, null, {muxer: ['multiplex']})
+      expect(b.modules.connection.muxer).to.eql([
+        require('libp2p-multiplex')
+      ])
+      done()
+    })
+  })
+
   it('start libp2pNode', (done) => {
     nodeA.start(done)
   })
