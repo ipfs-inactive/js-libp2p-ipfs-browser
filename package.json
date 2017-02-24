@@ -9,13 +9,13 @@
   ],
   "scripts": {
     "lint": "aegir-lint",
-    "test": "gulp test --webworker false",
+    "test": "gulp test --dom",
     "test:node": "gulp test:node",
-    "test:browser": "gulp test:browser",
+    "test:browser": "gulp test:browser --dom",
     "build": "gulp build",
-    "release": "gulp release --webworker false",
-    "release-minor": "gulp release --type minor --webworker false",
-    "release-major": "gulp release --type major --webworker false",
+    "release": "gulp release --dom",
+    "release-minor": "gulp release --type minor --dom",
+    "release-major": "gulp release --type major --dom",
     "coverage": "gulp coverage",
     "coverage-publish": "aegir-coverage publish"
   },
