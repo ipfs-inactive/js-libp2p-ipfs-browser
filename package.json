@@ -34,7 +34,7 @@
     "async": "^2.1.4",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
-    "libp2p-ipfs-nodejs": "~0.18.2",
+    "libp2p-ipfs-nodejs": "~0.19.0",
     "peer-id": "~0.8.2",
     "pre-commit": "^1.2.2",
     "pull-goodbye": "0.0.1",
