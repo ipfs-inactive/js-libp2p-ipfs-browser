@@ -171,7 +171,8 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     it('one big write', (done) => {
       nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
         expect(err).to.not.exist
-        const rawMessage = new Buffer(1000000).fill('a')
+        const rawMessage = new Buffer(100000)
+        rawMessage.fill('a')
 
         const s = serializer(goodbye({
           source: pull.values([rawMessage]),
