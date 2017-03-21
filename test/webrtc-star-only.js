@@ -1,7 +1,9 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
+const chai = require('chai')
+chai.use(require('dirty-chai'))
+const expect = chai.expect
 const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
@@ -21,7 +23,7 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
       (cb) => PeerId.create(cb),
       (cb) => PeerId.create(cb)
     ], (err, ids) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
 
       peer1 = new PeerInfo(ids[0])
       const mh1 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + ids[0].toB58String())
@@ -61,23 +63,23 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
 
   it('dial from the second node to the first node', (done) => {
     node1.dialByPeerInfo(peer2, '/echo/1.0.0', (err, conn) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
       setTimeout(check, 500)
 
       function check () {
         const text = 'hello'
         const peers1 = node1.peerBook.getAll()
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
         expect(Object.keys(peers1)).to.have.length(1)
         const peers2 = node2.peerBook.getAll()
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
         expect(Object.keys(peers2)).to.have.length(1)
 
         pull(
           pull.values([Buffer(text)]),
           conn,
           pull.collect((err, data) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist()
             expect(data[0].toString()).to.equal(text)
             done()
           })
@@ -88,12 +90,12 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
 
   it('node1 hangUp node2', (done) => {
     node1.hangUpByPeerInfo(peer2, (err) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
       setTimeout(check, 500)
 
       function check () {
         const peers = node1.peerBook.getAll()
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
         expect(Object.keys(peers)).to.have.length(0)
         expect(Object.keys(node1.swarm.muxedConns)).to.have.length(0)
         done()
@@ -113,7 +115,7 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
     }
 
     PeerId.create((err, id3) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
 
       const peer3 = new PeerInfo(id3)
       const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
