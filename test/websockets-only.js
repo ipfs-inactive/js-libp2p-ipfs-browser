@@ -63,8 +63,8 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
 
   // General connectivity tests
 
-  it('libp2p.dialByMultiaddr nodeA to nodeB', (done) => {
-    nodeA.dialByMultiaddr(peerB.multiaddrs[0], (err) => {
+  it('libp2p.dial using Multiaddr nodeA to nodeB', (done) => {
+    nodeA.dial(peerB.multiaddrs[0], (err) => {
       expect(err).to.not.exist()
       // Some time for Identify to finish
       setTimeout(check, 500)
@@ -75,12 +75,11 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
         expect(Object.keys(peers)).to.have.length(1)
         done()
       }
-      // TODO confirm that we got the pubkey through identify
     })
   })
 
-  it('libp2p.dialByMultiaddr on Protocol nodeA to nodeB', (done) => {
-    nodeA.dialByMultiaddr(peerB.multiaddrs[0], '/echo/1.0.0', (err, conn) => {
+  it('libp2p.dial using Multiaddr on Protocol nodeA to nodeB', (done) => {
+    nodeA.dial(peerB.multiaddrs[0], '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist()
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist()
@@ -98,8 +97,8 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.hangupByMultiaddr nodeA to nodeB', (done) => {
-    nodeA.hangUpByMultiaddr(peerB.multiaddrs[0], (err) => {
+  it('libp2p.hangUp using Multiaddr nodeA to nodeB', (done) => {
+    nodeA.hangUp(peerB.multiaddrs[0], (err) => {
       expect(err).to.not.exist()
       setTimeout(check, 500)
 
@@ -113,8 +112,8 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.dialByPeerInfo nodeA to nodeB', (done) => {
-    nodeA.dialByPeerInfo(peerB, (err) => {
+  it('libp2p.dial using PeerInfo nodeA to nodeB', (done) => {
+    nodeA.dial(peerB, (err) => {
       expect(err).to.not.exist()
       // Some time for Identify to finish
       setTimeout(check, 500)
@@ -129,8 +128,8 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
   })
 
-  it('libp2p.dialByPeerInfo on Protocol nodeA to nodeB', (done) => {
-    nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+  it('libp2p.dial using PeerInfo on Protocol nodeA to nodeB', (done) => {
+    nodeA.dial(peerB, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist()
       const peers = nodeA.peerBook.getAll()
       expect(err).to.not.exist()
@@ -141,15 +140,15 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
         conn,
         pull.collect((err, data) => {
           expect(err).to.not.exist()
-          expect(data).to.be.eql([Buffer('hey')])
+          expect(data).to.eql([Buffer('hey')])
           done()
         })
       )
     })
   })
 
-  it('libp2p.hangupByPeerInfo nodeA to nodeB', (done) => {
-    nodeA.hangUpByPeerInfo(peerB, (err) => {
+  it('libp2p.hangUp using PeerInfo nodeA to nodeB', (done) => {
+    nodeA.hangUp(peerB, (err) => {
       expect(err).to.not.exist()
       setTimeout(check, 500)
 
@@ -162,16 +161,10 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
       }
     })
   })
-
-  // NOTE, these dialById only works if a previous dial was made
-  // until we have PeerRouting
-  it.skip('libp2p.dialById nodeA to nodeB', (done) => {})
-  it.skip('libp2p.dialById on Protocol nodeA to nodeB', (done) => {})
-  it.skip('libp2p.hangupById nodeA to nodeB', (done) => {})
 
   describe('stress', () => {
     it('one big write', (done) => {
-      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+      nodeA.dial(peerB, '/echo/1.0.0', (err, conn) => {
         expect(err).to.not.exist()
         const rawMessage = new Buffer(100000)
         rawMessage.fill('a')
@@ -190,7 +183,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
     })
 
     it('many writes', (done) => {
-      nodeA.dialByPeerInfo(peerB, '/echo/1.0.0', (err, conn) => {
+      nodeA.dial(peerB, '/echo/1.0.0', (err, conn) => {
         expect(err).to.not.exist()
 
         const s = serializer(goodbye({

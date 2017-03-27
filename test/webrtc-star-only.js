@@ -62,7 +62,7 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
   })
 
   it('dial from the second node to the first node', (done) => {
-    node1.dialByPeerInfo(peer2, '/echo/1.0.0', (err, conn) => {
+    node1.dial(peer2, '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist()
       setTimeout(check, 500)
 
@@ -89,7 +89,7 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
   })
 
   it('node1 hangUp node2', (done) => {
-    node1.hangUpByPeerInfo(peer2, (err) => {
+    node1.hangUp(peer2, (err) => {
       expect(err).to.not.exist()
       setTimeout(check, 500)
 
@@ -121,8 +121,8 @@ describe('libp2p-ipfs-browser (webrtc only)', () => {
       const mh3 = multiaddr('/libp2p-webrtc-star/ip4/127.0.0.1/tcp/15555/ws/ipfs/' + id3.toB58String())
       peer3.multiaddr.add(mh3)
 
-      node1.discovery.on('peer', (peerInfo) => node1.dialByPeerInfo(peerInfo, check))
-      node2.discovery.on('peer', (peerInfo) => node2.dialByPeerInfo(peerInfo, check))
+      node1.on('peer', (peerInfo) => node1.dial(peerInfo, check))
+      node2.on('peer', (peerInfo) => node2.dial(peerInfo, check))
 
       const node3 = new Node(peer3, null, { webRTCStar: true })
       node3.start(check)

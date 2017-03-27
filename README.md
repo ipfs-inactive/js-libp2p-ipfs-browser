@@ -19,7 +19,7 @@
 This libp2p build has support for:
 
 - WebSockets and WebRTC
-- SPDY stream multiplexing
+- SPDY and mplex stream multiplexing
 - secio encrypted channels
 - Identify STUN protocol
 
@@ -29,17 +29,6 @@ This libp2p build has support for:
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-  - [start](#start)
-  - [stop](#stop)
-  - [dialById](#dialbyid)
-  - [dialByMultiaddr](#dialbymultiaddr)
-  - [dialByPeerInfo](#dialbypeerinfo)
-  - [hangUpById](#hangupbyid)
-  - [hangUpByMultiaddr](#hangupbymultiaddr)
-  - [hangUpByPeerInfo](#hangupbypeerinfo)
-  - [handle](#handle)
-  - [unhandle](#unhandle)
-  - [discovery](#discovery)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -52,26 +41,12 @@ npm install --save libp2p-ipfs-browser
 ## Usage
 
 ```js
-const libp2p-ipfs-browser = require('libp2p-ipfs-browser')
-
-libp2p-ipfs-browser.start()
+const Node = require('libp2p-ipfs-browser')
 ```
 
 ## API
 
-### start
-### stop
-### dialById
-### dialByMultiaddr
-### dialByPeerInfo
-### hangUpById
-### hangUpByMultiaddr
-### hangUpByPeerInfo
-### handle
-### unhandle
-### discovery
-
-This will create a new instance of an `events` `EventEmitter`.
+API docs can be found at https://github.com/libp2p/js-libp2p#usage
 
 ## Contribute
 
