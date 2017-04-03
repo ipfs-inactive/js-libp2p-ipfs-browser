@@ -1,3 +1,13 @@
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/ipfs/js-libp2p-ipfs-browser/compare/v0.22.0...v0.23.0) (2017-04-03)
+
+
+### Features
+
+* update to latest apis ([9a4dea4](https://github.com/ipfs/js-libp2p-ipfs-browser/commit/9a4dea4))
+
+
+
 <a name="0.22.0"></a>
 # [0.22.0](https://github.com/ipfs/js-libp2p-ipfs-browser/compare/v0.21.0...v0.22.0) (2017-03-29)
 
