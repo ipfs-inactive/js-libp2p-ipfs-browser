@@ -5,7 +5,6 @@
 const chai = require('chai')
 chai.use(require('dirty-chai'))
 const expect = chai.expect
-const multiaddr = require('multiaddr')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
 const pull = require('pull-stream')
@@ -20,7 +19,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   let nodeA
 
   before((done) => {
-    const mh = multiaddr('/ip4/127.0.0.1/tcp/9200/ws/ipfs/' + rawPeer.id)
+    const ma = '/ip4/127.0.0.1/tcp/9200/ws/ipfs/' + rawPeer.id
 
     PeerId.createFromPrivKey(rawPeer.privKey, (err, id) => {
       if (err) {
@@ -28,31 +27,29 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
       }
 
       peerB = new PeerInfo(id)
-      peerB.multiaddr.add(mh)
+      peerB.multiaddrs.add(ma)
       done()
     })
   })
 
-  after((done) => {
-    nodeA.stop(done)
-  })
+  after((done) => nodeA.stop(done))
 
   it('create libp2pNode', (done) => {
-    PeerInfo.create((err, info) => {
+    PeerInfo.create((err, peerInfo) => {
       expect(err).to.not.exist()
-      info.multiaddr.add(multiaddr('/ip4/0.0.0.0/tcp/0'))
-      nodeA = new Node(info)
+      peerInfo.multiaddrs.add('/ip4/0.0.0.0/tcp/0')
+
+      nodeA = new Node(peerInfo)
       done()
     })
   })
 
   it('create libp2pNode with multiplex only', (done) => {
-    PeerInfo.create((err, info) => {
+    PeerInfo.create((err, peerInfo) => {
       expect(err).to.not.exist()
-      const b = new Node(info, null, {muxer: ['multiplex']})
-      expect(b.modules.connection.muxer).to.eql([
-        require('libp2p-multiplex')
-      ])
+
+      const b = new Node(peerInfo, null, { muxer: ['multiplex'] })
+      expect(b.modules.connection.muxer).to.eql([require('libp2p-multiplex')])
       done()
     })
   })
@@ -64,14 +61,13 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   // General connectivity tests
 
   it('libp2p.dial using Multiaddr nodeA to nodeB', (done) => {
-    nodeA.dial(peerB.multiaddrs[0], (err) => {
+    nodeA.dial(peerB.multiaddrs.toArray()[0], (err) => {
       expect(err).to.not.exist()
-      // Some time for Identify to finish
-      setTimeout(check, 500)
+
+      setTimeout(check, 500) // Some time for Identify to finish
 
       function check () {
         const peers = nodeA.peerBook.getAll()
-        expect(err).to.not.exist()
         expect(Object.keys(peers)).to.have.length(1)
         done()
       }
@@ -79,10 +75,10 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   })
 
   it('libp2p.dial using Multiaddr on Protocol nodeA to nodeB', (done) => {
-    nodeA.dial(peerB.multiaddrs[0], '/echo/1.0.0', (err, conn) => {
+    nodeA.dial(peerB.multiaddrs.toArray()[0], '/echo/1.0.0', (err, conn) => {
       expect(err).to.not.exist()
+
       const peers = nodeA.peerBook.getAll()
-      expect(err).to.not.exist()
       expect(Object.keys(peers)).to.have.length(1)
 
       pull(
@@ -90,7 +86,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
         conn,
         pull.collect((err, data) => {
           expect(err).to.not.exist()
-          expect(data).to.be.eql([Buffer('hey')])
+          expect(data).to.eql([Buffer('hey')])
           done()
         })
       )
@@ -98,14 +94,14 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   })
 
   it('libp2p.hangUp using Multiaddr nodeA to nodeB', (done) => {
-    nodeA.hangUp(peerB.multiaddrs[0], (err) => {
+    nodeA.hangUp(peerB.multiaddrs.toArray()[0], (err) => {
       expect(err).to.not.exist()
+
       setTimeout(check, 500)
 
       function check () {
         const peers = nodeA.peerBook.getAll()
-        expect(err).to.not.exist()
-        expect(Object.keys(peers)).to.have.length(0)
+        expect(Object.keys(peers)).to.have.length(1)
         expect(Object.keys(nodeA.swarm.muxedConns)).to.have.length(0)
         done()
       }
@@ -115,16 +111,14 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
   it('libp2p.dial using PeerInfo nodeA to nodeB', (done) => {
     nodeA.dial(peerB, (err) => {
       expect(err).to.not.exist()
-      // Some time for Identify to finish
-      setTimeout(check, 500)
+
+      setTimeout(check, 500) // Some time for Identify to finish
 
       function check () {
         const peers = nodeA.peerBook.getAll()
-        expect(err).to.not.exist()
         expect(Object.keys(peers)).to.have.length(1)
         done()
       }
-      // TODO confirm that we got the pubkey through identify
     })
   })
 
@@ -155,7 +149,7 @@ describe('libp2p-ipfs-browser (websockets only)', () => {
       function check () {
         const peers = nodeA.peerBook.getAll()
         expect(err).to.not.exist()
-        expect(Object.keys(peers)).to.have.length(0)
+        expect(Object.keys(peers)).to.have.length(1)
         expect(Object.keys(nodeA.swarm.muxedConns)).to.have.length(0)
         done()
       }
