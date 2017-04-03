@@ -1,7 +1,6 @@
 'use strict'
 
 const gulp = require('gulp')
-const multiaddr = require('multiaddr')
 const Node = require('libp2p-ipfs-nodejs')
 const PeerInfo = require('peer-info')
 const PeerId = require('peer-id')
@@ -17,9 +16,7 @@ gulp.task('libnode:start', (done) => {
   let count = 0
   const ready = () => ++count === 2 ? done() : null
 
-  sigServer.start({
-    port: 15555
-  }, (err, _server) => {
+  sigServer.start({ port: 15555 }, (err, _server) => {
     if (err) {
       throw err
     }
@@ -27,34 +24,27 @@ gulp.task('libnode:start', (done) => {
     ready()
   })
 
-  PeerId.createFromJSON(rawPeer, gotId)
-
-  function gotId (err, pid) {
+  PeerId.createFromJSON(rawPeer, (err, peerId) => {
     if (err) {
       return done(err)
     }
-    const peer = new PeerInfo(pid)
+    const peer = new PeerInfo(peerId)
 
-    const ma = multiaddr('/ip4/127.0.0.1/tcp/9200/ws')
-    peer.multiaddr.add(ma)
+    peer.multiaddrs.add('/ip4/127.0.0.1/tcp/9200/ws')
 
     node = new Node(peer)
-    node.start(() => {
-      node.handle('/echo/1.0.0', (protocol, conn) => pull(conn, conn))
-      ready()
-    })
-  }
+    node.handle('/echo/1.0.0', (protocol, conn) => pull(conn, conn))
+    node.start(() => ready())
+  })
 })
 
 gulp.task('libnode:stop', (done) => {
-  setTimeout(() => {
-    node.stop((err) => {
-      if (err) {
-        throw err
-      }
-      server.stop(done)
-    })
-  }, 2000)
+  setTimeout(() => node.stop((err) => {
+    if (err) {
+      return done(err)
+    }
+    server.stop(done)
+  }), 2000)
 })
 
 gulp.task('test:browser:before', ['libnode:start'])
