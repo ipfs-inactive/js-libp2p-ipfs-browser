@@ -1,3 +1,8 @@
+<a name="0.24.0"></a>
+# [0.24.0](https://github.com/ipfs/js-libp2p-ipfs-browser/compare/v0.23.0...v0.24.0) (2017-04-07)
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.com/ipfs/js-libp2p-ipfs-browser/compare/v0.22.0...v0.23.0) (2017-04-03)
 
