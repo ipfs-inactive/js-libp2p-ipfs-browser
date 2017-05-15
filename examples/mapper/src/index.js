@@ -12,16 +12,17 @@ domReady(() => {
       return console.log('Could not create the Node, check if your browser has WebRTC Support', err)
     }
 
-    node.discovery.on('peer', (peerInfo) => {
+    node.on('peer:discovery', (peerInfo) => {
+      console.log('Discovered a peer')
       const idStr = peerInfo.id.toB58String()
       console.log('Discovered: ' + idStr)
 
-      node.dialByPeerInfo(peerInfo, (err, conn) => {
+      node.dial(peerInfo, (err, conn) => {
         if (err) { return console.log('Failed to dial:', idStr) }
       })
     })
 
-    node.swarm.on('peer-mux-established', (peerInfo) => {
+    node.on('peer:connect', (peerInfo) => {
       const idStr = peerInfo.id.toB58String()
       console.log('Got connection to: ' + idStr)
       const connDiv = document.createElement('div')
@@ -30,7 +31,7 @@ domReady(() => {
       swarmDiv.append(connDiv)
     })
 
-    node.swarm.on('peer-mux-closed', (peerInfo) => {
+    node.on('peer:disconnect', (peerInfo) => {
       const idStr = peerInfo.id.toB58String()
       console.log('Lost connection to: ' + idStr)
       document.getElementById(idStr).remove()
@@ -50,9 +51,8 @@ domReady(() => {
 
       console.log('Node is listening o/')
 
-      /* to stop the node
-       * node.stop((err) => {})
-       */
+      // NOTE: to stop the node
+      // node.stop((err) => {})
     })
   })
 })
