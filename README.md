@@ -1,4 +1,22 @@
-# js-libp2p-ipfs-browser
+js-libp2p-ipfs-browser
+======================
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+# Deprecation Notice
+
+This module has been deprecated in favour of:
+
+- Consolidating examples for libp2p on js-libp2p
+- Avoid duplication of code
+- Reducing overhead in maintainece. Now the bundles live in js-ipfs itself, see - https://github.com/ipfs/js-ipfs/tree/master/src/core/runtime
+- Now all of the tests live in https://github.com/libp2p/js-libp2p/tree/master/test
+
+--------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+
+
 
 ![](https://github.com/libp2p/js-libp2p/raw/1e3e9db84d1e5fdd5682cc5e0fdaabfcd07ad55a/img/js-libp2p-ipfs-browser.png?raw=true)
 
